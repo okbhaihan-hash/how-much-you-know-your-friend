@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>How much you know your friend?</title>
+<style>
+  :root{--bg:#0b1726;--line:#1e2a40;--text:#e5e7eb;--muted:#94a3b8;--accent:#7c3aed;--accent2:#2563eb;--good:#10b981;--warn:#f59e0b;--bad:#ef4444}
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:#0b1726;color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
+  .wrap{max-width:960px;margin:0 auto;padding:16px}
+  .brand{font-weight:900;letter-spacing:.05em;color:#c7d2fe}
+  h1{margin:.2rem 0 1rem;font-size:clamp(22px,5vw,34px)}
+  .card{background:linear-gradient(180deg,#0f1a2e,#0b1424);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px #0006}
+  .pad{padding:16px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  input[type=text]{flex:1;min-width:220px;padding:12px 14px;border-radius:12px;border:1px solid #334155;background:#0b1222;color:var(--text);outline:none}
+  button{cursor:pointer;border:none;border-radius:12px;padding:12px 16px;font-weight:700}
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+  .btn2{background:#0b1222;border:1px dashed #334155;color:var(--text)}
+  .q{display:grid;gap:10px}
+  .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .choice{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;background:#0d1628;border:1.6px solid #2a3555;border-radius:14px;padding:14px}
+  .choice.sel{outline:2px solid var(--accent2);background:#112142}
+  .pill{font-size:12px;padding:4px 10px;background:#0d1628;border:1px solid #27324e;border-radius:999px}
+  .muted{color:var(--muted)}
+  .center{display:grid;place-items:center;text-align:center}
+  .score{font-size:40px;font-weight:900}
+  .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  .list{margin-top:10px;border-top:1px solid var(--line)}
+  .li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #132039}
+  .tag{background:#0b1222;border:1px solid #223055;border-radius:999px;padding:4px 10px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">HOW MUCH YOU KNOW YOUR FRIEND?</div>
+    <h1 id="title">Create your quiz</h1>
+    <div class="muted" id="sub">Set your nickname, answer 10 choices, share link. Friends guess your answers — scores go to your scoreboard.</div>
+    <div class="card"><div class="pad" id="app"></div></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+  firebaseConfig = {
+  apiKey: "AIzaSyC_Yx6QCvWmPOtx1M90Jwt5XSx4BM7tB3E",
+  authDomain: "how-much-you-know-your-f-36dca.firebaseapp.com",
+  databaseURL: "https://how-much-you-know-your-f-36dca-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "how-much-you-know-your-f-36dca",
+  storageBucket: "how-much-you-know-your-f-36dca.firebasestorage.app",
+  messagingSenderId: "764702208781",
+  appId: "1:764702208781:web:f323ec6caa8686f94eb644",
+  measurementId: "G-HJ78KC23B4"
+};
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  /* ================================================ */
+
+  // Helpers
+  const $ = s=>document.querySelector(s);
+  const el=(t,a={},c=[])=>{const n=document.createElement(t);Object.entries(a).forEach(([k,v])=>v!=null&&(n[k]=v));c.forEach(x=>n.appendChild(typeof x==="string"?document.createTextNode(x):x));return n};
+  const copy = async (txt)=>{try{await navigator.clipboard.writeText(txt);alert("Link copied! Send to friends.");}catch{prompt("Copy this link",txt)}};
+  const shareWA = (txt)=>{ window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank'); };
+  const params = new URLSearchParams(location.search);
+  const quizIdParam = params.get('quiz');
+  const viewParam = params.get('view');
+  const app = $('#app'), title=$('#title'), sub=$('#sub');
+
+  // 10 questions (A/B)
+  const Q = [
+    { t:n=>`Is ${n} a Coffee person or Chai person?`,        A:"☕ Coffee",  B:"🍵 Chai" },
+    { t:n=>`Is ${n} an OTT lover or Theatre lover?`,          A:"📺 OTT",     B:"🎭 Theatre" },
+    { t:n=>`Weekend pick for ${n}?`,                          A:"🎮 Gaming",  B:"🏞️ Long drive" },
+    { t:n=>`Which pet suits ${n} more?`,                      A:"🐶 Dog",     B:"🐱 Cat" },
+    { t:n=>`${n}'s ideal trip?`,                              A:"🏔️ Mountains",B:"🏖️ Beaches" },
+    { t:n=>`Morning or Night person?`,                        A:"🌅 Morning", B:"🌙 Night" },
+    { t:n=>`${n} prefers chat or call?`,                      A:"💬 Text",    B:"📞 Call" },
+    { t:n=>`Spend more on?`,                                  A:"👕 Clothes", B:"📱 Gadgets" },
+    { t:n=>`${n} loves spicy or sweet?`,                      A:"🌶️ Spicy",  B:"🍰 Sweet" },
+    { t:n=>`Party or chill at home?`,                         A:"🎉 Party",   B:"🏠 Chill" },
+  ];
+
+  function screenCreate(){
+    title.textContent='Create your quiz';
+    sub.textContent='Enter nickname, answer 10 choices. Share link to friends.';
+    const name = el('input',{type:'text',placeholder:'Your nickname (e.g., Homie)'});
+    const start = el('button',{className:'btn'},['Start']);
+    app.replaceChildren(el('div',{},[
+      el('div',{className:'row'},[name,start]),
+      el('div',{className:'muted',style:'margin-top:6px'},['Default 10 questions added.'])
+    ]));
+    start.onclick=()=>startAnswerFlow(name.value.trim()||'Friend');
+  }
+
+  function startAnswerFlow(nick){
+    let i=0; const ans=Array(10).fill(null);
+    const render=()=>{
+      title.textContent=`Q${i+1} of 10`; sub.textContent=nick+' — pick one';
+      const q=Q[i];
+      const A=el('div',{className:'choice'+(ans[i]==='A'?' sel':'')},[q.A]);
+      const B=el('div',{className:'choice'+(ans[i]==='B'?' sel':'')},[q.B]);
+      A.onclick=()=>{ans[i]='A'; next()}; B.onclick=()=>{ans[i]='B'; next()};
+      app.replaceChildren(el('div',{className:'q'},[
+        el('h3',{},[q.t(nick)]),
+        el('div',{className:'opt'},[A,B]),
+        el('div',{},[el('span',{className:'pill'},[`Nick: ${nick}`]), ' ', el('span',{className:'pill'},[`Answered ${ans.filter(Boolean).length}/10`])])
+      ]));
+    };
+    const next=()=>{ if(i<9){i++; render()} else finish() };
+    const finish=async()=>{
+      title.textContent='Generating your link…'; sub.textContent='Please wait…';
+      const ref=db.ref('quizzes').push(); const quizId=ref.key;
+      await ref.set({nick, answers:ans, createdAt: Date.now()});
+      const base=location.href.split('?')[0] || (location.origin+location.pathname);
+      const link=`${base}?quiz=${quizId}`;
+      const board=`${base}?quiz=${quizId}&view=board`;
+      title.textContent='Share your link';
+      sub.textContent='Friends will answer and their scores will appear in your scoreboard.';
+      app.replaceChildren(
+        el('div',{},[
+          el('div',{className:'pad',style:'background:#0b1222;border:1px solid #223055;border-radius:12px;word-break:break-all'},[
+            el('div',{className:'muted'},['Quiz link:']),
+            el('div',{},[link])
+          ]),
+          el('div',{style:'height:8px'}),
+          el('div',{className:'row'},[
+            el('button',{className:'btn',onclick:()=>copy(link)},['Copy link']),
+            el('button',{className:'btn',onclick:()=>shareWA(link)},['WhatsApp']),
+            el('button',{className:'btn2',onclick:()=>openBoard(quizId,nick)},['Open my scoreboard'])
+          ]),
+          el('div',{className:'muted',style:'margin-top:8px'},['Scoreboard (for you): ',board])
+        ])
+      );
+    };
+    render();
+  }
+
+  async function screenTake(quizId){
+    const snap=await db.ref('quizzes/'+quizId).get(); const quiz=snap.val();
+    if(!quiz){ title.textContent='Invalid link'; sub.textContent='Quiz not found.'; app.textContent=''; return; }
+    const {nick,answers:correct}=quiz;
+    title.textContent=`Quiz for ${nick}`; sub.textContent='Pick what '+nick+' chose.';
+    let i=0; const ans=Array(10).fill(null);
+    const render=()=>{
+      const q=Q[i];
+      const A=el('div',{className:'choice'+(ans[i]==='A'?' sel':'')},[q.A]);
+      const B=el('div',{className:'choice'+(ans[i]==='B'?' sel':'')},[q.B]);
+      A.onclick=()=>{ans[i]='A'; next()}; B.onclick=()=>{ans[i]='B'; next()};
+      app.replaceChildren(el('div',{className:'q'},[
+        el('h3',{},[q.t(nick)]),
+        el('div',{className:'opt'},[A,B]),
+        el('div',{},[el('span',{className:'pill'},[`Q ${i+1}/10`]), ' ', el('span',{className:'pill'},['For: '+nick])])
+      ]));
+    };
+    const next=()=>{ if(i<9){i++; render()} else finish() };
+    const finish=()=>{
+      let score=0; for(let j=0;j<10;j++) if(ans[j]===correct[j]) score++;
+      title.textContent='Your score'; sub.textContent=`How much you know ${nick}?`;
+      const you=el('input',{type:'text',placeholder:'Your nickname (e.g., Rocky)'});
+      const save=el('button',{className:'btn'},['Save & show scoreboard']);
+      save.onclick=async()=>{
+        const by=(you.value||'Friend').trim();
+        await db.ref(`scoreboards/${quizId}`).push({by,score,at:Date.now()});
+        openBoard(quizId,nick);
+      };
+      app.replaceChildren(el('div',{className:'center'},[
+        el('div',{className:'score',style:`color:${score>=7?'var(--good)':score>=4?'var(--warn)':'var(--bad)'}`},[`${score} / 10`]),
+        el('div',{className:'row',style:'margin-top:8px'},[you,save]),
+        el('div',{className:'row',style:'margin-top:8px'},[
+          el('button',{className:'btn2',onclick:()=>{history.pushState({},'',location.href.split('?')[0]);screenCreate();}},['Create my own quiz'])
+        ])
+      ]));
+    };
+    render();
+  }
+
+  function openBoard(quizId, nick){
+    title.textContent=(nick?`${nick}'s `:'')+'Scoreboard'; sub.textContent='Friends who answered this quiz.';
+    const list=el('div',{className:'list'});
+    app.replaceChildren(list);
+    const ref=db.ref(`scoreboards/${quizId}`);
+    ref.on('value',snap=>{
+      const rows=Object.values(snap.val()||{}).sort((a,b)=>b.at-a.at);
+      list.replaceChildren(rows.length? el('div',{},rows.map(r=>el('div',{className:'li'},[
+        el('div',{},[r.by||'Friend']), el('div',{className:'tag'},[`${r.score}/10`])
+      ]))) : el('div',{className:'pad muted'},['No entries yet. Share your link!']));
+    });
+    const base=location.href.split('?')[0] || (location.origin+location.pathname);
+    const share=`${base}?quiz=${quizId}`;
+    app.prepend(el('div',{className:'row',style:'margin-bottom:10px'},[
+      el('span',{className:'pill'},['Quiz ID: '+quizId]),
+      el('button',{className:'btn',onclick:()=>copy(share)},['Copy link']),
+      el('button',{className:'btn',onclick:()=>shareWA(share)},['WhatsApp'])
+    ]));
+  }
+
+  // Router
+  (function init(){
+    if(quizIdParam && viewParam==='board'){ openBoard(quizIdParam); return; }
+    if(quizIdParam){ screenTake(quizIdParam); return; }
+    screenCreate();
+  })();
+  </script>
+</body>
+</html>
