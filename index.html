@@ -3,47 +3,126 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>How much you know your friend?</title>
+<title>How Much You Know Your Friend — Luxe Edition</title>
+
+<!-- ====== PREMIUM CINEMATIC THEME ====== -->
 <style>
-  :root{--bg:#0b1726;--line:#1e2a40;--text:#e5e7eb;--muted:#94a3b8;--accent:#7c3aed;--accent2:#2563eb;--good:#10b981;--warn:#f59e0b;--bad:#ef4444}
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;background:#0b1726;color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif}
-  .wrap{max-width:960px;margin:0 auto;padding:16px}
-  .brand{font-weight:900;letter-spacing:.05em;color:#c7d2fe}
-  h1{margin:.2rem 0 1rem;font-size:clamp(22px,5vw,34px)}
-  .card{background:linear-gradient(180deg,#0f1a2e,#0b1424);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 60px #0006}
+  :root{
+    --bg:#060815;
+    --ink:#E8ECFF;
+    --muted:#9BA4C7;
+    --card:#0B0F25;
+    --edge:#1a2142;
+    --accent:#8B5CF6; /* purple */
+    --accent2:#06B6D4; /* cyan */
+    --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;color:var(--ink);font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial, sans-serif; 
+    background: radial-gradient(120% 70% at 50% -10%, #142042 0, #0a0f25 45%, #060815 70%);
+    overflow-x:hidden;
+  }
+  /* Animated nebula + gradient beams */
+  .beam{
+    position:fixed; inset:-20vmax; pointer-events:none; filter: blur(60px) saturate(150%);
+    background:
+      radial-gradient(40vmax 30vmax at 15% 10%, #1d4ed880 0, transparent 60%),
+      radial-gradient(40vmax 30vmax at 85% 20%, #8b5cf680 0, transparent 60%),
+      radial-gradient(35vmax 30vmax at 50% 85%, #06b6d470 0, transparent 60%);
+    animation: float 16s ease-in-out infinite alternate;
+    opacity:.55;
+  }
+  @keyframes float{ from{transform:translateY(-2vmax)} to{transform:translateY(2vmax)} }
+
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  .titlebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .gem{width:22px;height:22px;border-radius:6px;
+    background: conic-gradient(from 200deg, var(--accent), var(--accent2), #22d3ee, var(--accent));
+    box-shadow: 0 0 14px #22d3ee40 inset, 0 0 14px #22d3ee50; }
+  h1{margin:0;font-size:clamp(22px,4.8vw,40px);font-weight:900;letter-spacing:.02em}
+  .sub{color:var(--muted)}
+
+  .glass{
+    background: linear-gradient(180deg, #0b122aEE, #0a1022EE);
+    border:1px solid var(--edge); border-radius:22px; box-shadow: 0 25px 80px #0007;
+  }
   .pad{padding:16px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  input[type=text]{flex:1;min-width:220px;padding:12px 14px;border-radius:12px;border:1px solid #334155;background:#0b1222;color:var(--text);outline:none}
-  button{cursor:pointer;border:none;border-radius:12px;padding:12px 16px;font-weight:700}
-  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-  .btn2{background:#0b1222;border:1px dashed #334155;color:var(--text)}
-  .q{display:grid;gap:10px}
-  .opt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .choice{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;background:#0d1628;border:1.6px solid #2a3555;border-radius:14px;padding:14px}
-  .choice.sel{outline:2px solid var(--accent2);background:#112142}
-  .pill{font-size:12px;padding:4px 10px;background:#0d1628;border:1px solid #27324e;border-radius:999px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stack{display:grid;gap:12px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  input[type=text]{
+    width:100%;padding:14px 16px;border-radius:14px;border:1px solid #23305a;background:#0a1024;color:var(--ink);outline:none
+  }
+  button{cursor:pointer;border:none;border-radius:14px;padding:12px 16px;font-weight:800}
+  .btn{
+    color:white;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    box-shadow: 0 10px 28px #06b6d44a, inset 0 -2px 0 #ffffff22;
+  }
+  .btn.outline{background:#0a1020;border:1px solid #2a3869;color:var(--ink)}
+  .pill{font-size:12px;padding:6px 10px;border-radius:999px;background:#0b1226;border:1px solid #25325e}
   .muted{color:var(--muted)}
   .center{display:grid;place-items:center;text-align:center}
-  .score{font-size:40px;font-weight:900}
+
+  /* Question card with images */
+  .q{display:grid;gap:12px}
+  .q h3{margin:0 0 6px;font-size:20px}
+  .opt{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .choice{
+    display:grid; gap:8px; border:1.6px solid #26325f; border-radius:16px; overflow:hidden;
+    background:#0b1230; transform:translateZ(0);
+  }
+  .choice img{width:100%;height:160px;object-fit:cover;display:block;filter:saturate(1.12) contrast(1.02)}
+  .cap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px}
+  .cap .l{font-weight:800}
+  .cap .r{opacity:.9;font-size:13px}
+  .badge{font-size:13px;padding:4px 8px;border-radius:999px;background:#0a1024;border:1px solid #2b396b}
+  .sel{outline:2px solid var(--accent2); box-shadow: 0 0 0 4px #22d3ee25 inset}
+
+  .score{font-size:46px;font-weight:900}
   .good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
-  .list{margin-top:10px;border-top:1px solid var(--line)}
-  .li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #132039}
-  .tag{background:#0b1222;border:1px solid #223055;border-radius:999px;padding:4px 10px}
+
+  .list{margin-top:12px;border-top:1px solid var(--edge)}
+  .li{display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid #121c3a}
+  .tag{background:#0a1026;border:1px solid #223055;border-radius:999px;padding:4px 10px}
+
+  /* subtle entrance */
+  .fade{animation:fade .35s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  @media (max-width:720px){
+    .grid,.opt{grid-template-columns:1fr}
+    .choice img{height:180px}
+  }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="brand">HOW MUCH YOU KNOW YOUR FRIEND?</div>
-    <h1 id="title">Create your quiz</h1>
-    <div class="muted" id="sub">Set your nickname, answer 10 choices, share link. Friends guess your answers — scores go to your scoreboard.</div>
-    <div class="card"><div class="pad" id="app"></div></div>
+<div class="beam" aria-hidden="true"></div>
+
+<div class="wrap">
+  <div class="titlebar">
+    <div class="brand">
+      <div class="gem"></div>
+      <div>
+        <div class="pill">HOW MUCH YOU KNOW YOUR FRIEND?</div>
+        <h1 id="heading">Create your luxe quiz</h1>
+        <div class="sub" id="sub">Nick name set karo, 20 choices answer karo, link share karo — scoreboard auto update.</div>
+      </div>
+    </div>
+    <button id="shareTop" class="btn outline" style="display:none">Copy quiz link</button>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <div class="glass pad"><div id="step" class="fade"></div></div>
+</div>
 
+<!-- Firebase (compat for simplicity) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
   <script>
   firebaseConfig = {
   apiKey: "AIzaSyC_Yx6QCvWmPOtx1M90Jwt5XSx4BM7tB3E",
@@ -59,150 +138,264 @@
   const db = firebase.database();
   /* ================================================ */
 
-  // Helpers
-  const $ = s=>document.querySelector(s);
-  const el=(t,a={},c=[])=>{const n=document.createElement(t);Object.entries(a).forEach(([k,v])=>v!=null&&(n[k]=v));c.forEach(x=>n.appendChild(typeof x==="string"?document.createTextNode(x):x));return n};
-  const copy = async (txt)=>{try{await navigator.clipboard.writeText(txt);alert("Link copied! Send to friends.");}catch{prompt("Copy this link",txt)}};
-  const shareWA = (txt)=>{ window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank'); };
-  const params = new URLSearchParams(location.search);
-  const quizIdParam = params.get('quiz');
-  const viewParam = params.get('view');
-  const app = $('#app'), title=$('#title'), sub=$('#sub');
+/* ---------- Question bank (20) with images ---------- */
+const Q20 = [
+  // Each: { t: (n)=>'text', A:{label:'', img:'url'}, B:{label:'', img:'url'} }
+  { t:n=>`Is ${n} a Coffee or Chai person?`,
+    A:{label:"☕ Coffee", img:"https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🍵 Chai",    img:"https://images.unsplash.com/photo-1615486364075-7e8f4a151797?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`${n} likes OTT binge or Theatre vibe?`,
+    A:{label:"📺 OTT", img:"https://images.unsplash.com/photo-1581905764498-f1b60bae941a?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🎭 Theatre", img:"https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Weekend pick for ${n}?`,
+    A:{label:"🎮 Gaming", img:"https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🏞️ Long Drive", img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Which pet energy suits ${n}?`,
+    A:{label:"🐶 Dog", img:"https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🐱 Cat", img:"https://images.unsplash.com/photo-1519052537078-e6302a4968d4?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`${n}'s ideal trip?`,
+    A:{label:"🏔️ Mountains", img:"https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🏖️ Beach", img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Morning person or Night owl?`,
+    A:{label:"🌅 Morning", img:"https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🌙 Night", img:"https://images.unsplash.com/photo-1500043357865-c6b8827edf39?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`${n} prefers texting or calls?`,
+    A:{label:"💬 Text", img:"https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"📞 Call", img:"https://images.unsplash.com/photo-1525182008055-f88b95ff7980?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Spend more on?`,
+    A:{label:"👕 Clothes", img:"https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"📱 Gadgets", img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`${n} loves spicy or sweet?`,
+    A:{label:"🌶️ Spicy", img:"https://images.unsplash.com/photo-1478144592103-25e218a04891?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🍰 Sweet", img:"https://images.unsplash.com/photo-1505250469679-203ad9ced0cb?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Party animal or Cozy home?`,
+    A:{label:"🎉 Party", img:"https://images.unsplash.com/photo-1521335629791-ce4aec67dd53?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🏠 Chill", img:"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Street food or Fine dining?`,
+    A:{label:"🍢 Street", img:"https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🍽️ Fine", img:"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Books or Podcasts?`,
+    A:{label:"📚 Books", img:"https://images.unsplash.com/photo-1519682337058-a94d519337bc?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🎧 Podcasts", img:"https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Fitness style for ${n}?`,
+    A:{label:"🏃‍♂️ Cardio", img:"https://images.unsplash.com/photo-1526406915894-6c1d04c19a9b?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🏋️‍♀️ Weights", img:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Budget trip or Luxury stay?`,
+    A:{label:"💼 Budget", img:"https://images.unsplash.com/photo-1541417904950-b855846fe074?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"💎 Luxury", img:"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Android or iOS for ${n}?`,
+    A:{label:"🤖 Android", img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🍎 iOS", img:"https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Action movies or Rom-com?`,
+    A:{label:"🔥 Action", img:"https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"❤️ Rom-com", img:"https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`City life or Countryside?`,
+    A:{label:"🏙️ City", img:"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🌾 Countryside", img:"https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`${n} saves or splurges?`,
+    A:{label:"💰 Save", img:"https://images.unsplash.com/photo-1567427013953-1d6085f4e8f3?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🛍️ Splurge", img:"https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Solo time or Big group?`,
+    A:{label:"🧘 Solo", img:"https://images.unsplash.com/photo-1527255330057-39d8c6c1c4be?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"👥 Group", img:"https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=1200&auto=format&fit=crop"} },
+  { t:n=>`Cats on reels or Dogs on reels?`,
+    A:{label:"🐱 Reels", img:"https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=1200&auto=format&fit=crop"},
+    B:{label:"🐶 Reels", img:"https://images.unsplash.com/photo-1530281700549-e82e7bf110d6?q=80&w=1200&auto=format&fit=crop"} },
+];
 
-  // 10 questions (A/B)
-  const Q = [
-    { t:n=>`Is ${n} a Coffee person or Chai person?`,        A:"☕ Coffee",  B:"🍵 Chai" },
-    { t:n=>`Is ${n} an OTT lover or Theatre lover?`,          A:"📺 OTT",     B:"🎭 Theatre" },
-    { t:n=>`Weekend pick for ${n}?`,                          A:"🎮 Gaming",  B:"🏞️ Long drive" },
-    { t:n=>`Which pet suits ${n} more?`,                      A:"🐶 Dog",     B:"🐱 Cat" },
-    { t:n=>`${n}'s ideal trip?`,                              A:"🏔️ Mountains",B:"🏖️ Beaches" },
-    { t:n=>`Morning or Night person?`,                        A:"🌅 Morning", B:"🌙 Night" },
-    { t:n=>`${n} prefers chat or call?`,                      A:"💬 Text",    B:"📞 Call" },
-    { t:n=>`Spend more on?`,                                  A:"👕 Clothes", B:"📱 Gadgets" },
-    { t:n=>`${n} loves spicy or sweet?`,                      A:"🌶️ Spicy",  B:"🍰 Sweet" },
-    { t:n=>`Party or chill at home?`,                         A:"🎉 Party",   B:"🏠 Chill" },
-  ];
+/* ---------- tiny helpers ---------- */
+const $ = s => document.querySelector(s);
+const el = (t,a={},c=[])=>{const n=document.createElement(t);Object.entries(a).forEach(([k,v])=>v!=null&&(n[k]=v));c.forEach(x=>n.appendChild(typeof x==="string"?document.createTextNode(x):x));return n};
+const copy = async (txt)=>{try{await navigator.clipboard.writeText(txt);alert("Link copied!");}catch{prompt("Copy this link", txt);}};
 
-  function screenCreate(){
-    title.textContent='Create your quiz';
-    sub.textContent='Enter nickname, answer 10 choices. Share link to friends.';
-    const name = el('input',{type:'text',placeholder:'Your nickname (e.g., Homie)'});
-    const start = el('button',{className:'btn'},['Start']);
-    app.replaceChildren(el('div',{},[
-      el('div',{className:'row'},[name,start]),
-      el('div',{className:'muted',style:'margin-top:6px'},['Default 10 questions added.'])
+const params = new URLSearchParams(location.search);
+const quizIdParam = params.get('quiz');
+const viewParam = params.get('view'); // 'board'
+
+const step=$('#step'), heading=$('#heading'), sub=$('#sub'), shareTop=$('#shareTop');
+
+function needConfig(){ return (typeof firebase==='undefined') || !firebase.apps?.length; }
+
+/* ---------- Screens ---------- */
+function screenConfig(){
+  heading.textContent = 'Paste Firebase Config';
+  sub.textContent = 'Firebase console → Project settings → Web app (</>) → copy firebaseConfig and paste at the top of this file.';
+  step.replaceChildren(el('div',{className:'stack'},[
+    el('div',{className:'muted'},['Open your file and uncomment firebaseConfig + initialize lines.']),
+    el('div',{className:'row'},[
+      el('span',{className:'pill'},['Tip:']),
+      el('span',{},['Keep Realtime Database in test mode while trying.'])
+    ])
+  ]));
+}
+
+function screenCreator(){
+  shareTop.style.display='none';
+  heading.textContent='Create your luxe quiz';
+  sub.textContent='Nickname set karo aur 20 choices answer karo.';
+  const name=el('input',{type:'text',placeholder:'Your nickname (e.g., Homelander)'});
+  const start=el('button',{className:'btn'},['Start']);
+  step.replaceChildren(el('div',{className:'grid fade'},[
+    el('div',{className:'stack'},[
+      el('div',{className:'pill'},['Step 1']),
+      el('h3',{},['Set your nickname']),
+      name,
+      start,
+      el('div',{className:'muted'},['Default 20 questions listed.'])
+    ]),
+    el('div',{className:'stack'},[
+      el('div',{className:'pill'},['Heads up']),
+      el('div',{className:'muted'},['After finishing, you’ll get a sharable link. Friends answer → your scoreboard updates live.'])
+    ])
+  ]));
+  start.onclick=()=> startCreator(name.value.trim()||'Friend');
+}
+
+function startCreator(nick){
+  let i=0; const answers=Array(20).fill(null);
+  const render=()=>{
+    shareTop.style.display='none';
+    heading.textContent=`Q${i+1} of 20`;
+    sub.textContent= nick + ' — choose one';
+    const q=Q20[i];
+    const A=card(q.A, answers[i]==='A');
+    const B=card(q.B, answers[i]==='B');
+    A.onclick=()=>{answers[i]='A'; next()};
+    B.onclick=()=>{answers[i]='B'; next()};
+    step.replaceChildren(el('div',{className:'q fade'},[
+      el('h3',{},[q.t(nick)]),
+      el('div',{className:'opt'},[A,B]),
+      el('div',{className:'row'},[
+        el('span',{className:'pill'},[`Nick: ${nick}`]),
+        el('span',{className:'pill'},[`Answered ${answers.filter(Boolean).length}/20`])
+      ])
     ]));
-    start.onclick=()=>startAnswerFlow(name.value.trim()||'Friend');
-  }
+  };
+  const card=(opt, active)=> el('div',{className:'choice'+(active?' sel':'')},[
+    el('img',{src:opt.img,alt:''}),
+    el('div',{className:'cap'},[
+      el('div',{className:'l'},[opt.label]),
+      el('div',{className:'r'},[el('span',{className:'badge'},['Tap to choose'])])
+    ])
+  ]);
 
-  function startAnswerFlow(nick){
-    let i=0; const ans=Array(10).fill(null);
-    const render=()=>{
-      title.textContent=`Q${i+1} of 10`; sub.textContent=nick+' — pick one';
-      const q=Q[i];
-      const A=el('div',{className:'choice'+(ans[i]==='A'?' sel':'')},[q.A]);
-      const B=el('div',{className:'choice'+(ans[i]==='B'?' sel':'')},[q.B]);
-      A.onclick=()=>{ans[i]='A'; next()}; B.onclick=()=>{ans[i]='B'; next()};
-      app.replaceChildren(el('div',{className:'q'},[
-        el('h3',{},[q.t(nick)]),
-        el('div',{className:'opt'},[A,B]),
-        el('div',{},[el('span',{className:'pill'},[`Nick: ${nick}`]), ' ', el('span',{className:'pill'},[`Answered ${ans.filter(Boolean).length}/10`])])
-      ]));
-    };
-    const next=()=>{ if(i<9){i++; render()} else finish() };
-    const finish=async()=>{
-      title.textContent='Generating your link…'; sub.textContent='Please wait…';
-      const ref=db.ref('quizzes').push(); const quizId=ref.key;
-      await ref.set({nick, answers:ans, createdAt: Date.now()});
-      const base=location.href.split('?')[0] || (location.origin+location.pathname);
-      const link=`${base}?quiz=${quizId}`;
-      const board=`${base}?quiz=${quizId}&view=board`;
-      title.textContent='Share your link';
-      sub.textContent='Friends will answer and their scores will appear in your scoreboard.';
-      app.replaceChildren(
-        el('div',{},[
-          el('div',{className:'pad',style:'background:#0b1222;border:1px solid #223055;border-radius:12px;word-break:break-all'},[
-            el('div',{className:'muted'},['Quiz link:']),
-            el('div',{},[link])
-          ]),
-          el('div',{style:'height:8px'}),
-          el('div',{className:'row'},[
-            el('button',{className:'btn',onclick:()=>copy(link)},['Copy link']),
-            el('button',{className:'btn',onclick:()=>shareWA(link)},['WhatsApp']),
-            el('button',{className:'btn2',onclick:()=>openBoard(quizId,nick)},['Open my scoreboard'])
-          ]),
-          el('div',{className:'muted',style:'margin-top:8px'},['Scoreboard (for you): ',board])
-        ])
-      );
-    };
-    render();
-  }
+  const next=()=>{ if(i<19){ i++; render(); } else finish(); };
 
-  async function screenTake(quizId){
-    const snap=await db.ref('quizzes/'+quizId).get(); const quiz=snap.val();
-    if(!quiz){ title.textContent='Invalid link'; sub.textContent='Quiz not found.'; app.textContent=''; return; }
-    const {nick,answers:correct}=quiz;
-    title.textContent=`Quiz for ${nick}`; sub.textContent='Pick what '+nick+' chose.';
-    let i=0; const ans=Array(10).fill(null);
-    const render=()=>{
-      const q=Q[i];
-      const A=el('div',{className:'choice'+(ans[i]==='A'?' sel':'')},[q.A]);
-      const B=el('div',{className:'choice'+(ans[i]==='B'?' sel':'')},[q.B]);
-      A.onclick=()=>{ans[i]='A'; next()}; B.onclick=()=>{ans[i]='B'; next()};
-      app.replaceChildren(el('div',{className:'q'},[
-        el('h3',{},[q.t(nick)]),
-        el('div',{className:'opt'},[A,B]),
-        el('div',{},[el('span',{className:'pill'},[`Q ${i+1}/10`]), ' ', el('span',{className:'pill'},['For: '+nick])])
-      ]));
-    };
-    const next=()=>{ if(i<9){i++; render()} else finish() };
-    const finish=()=>{
-      let score=0; for(let j=0;j<10;j++) if(ans[j]===correct[j]) score++;
-      title.textContent='Your score'; sub.textContent=`How much you know ${nick}?`;
-      const you=el('input',{type:'text',placeholder:'Your nickname (e.g., Rocky)'});
-      const save=el('button',{className:'btn'},['Save & show scoreboard']);
-      save.onclick=async()=>{
-        const by=(you.value||'Friend').trim();
-        await db.ref(`scoreboards/${quizId}`).push({by,score,at:Date.now()});
-        openBoard(quizId,nick);
-      };
-      app.replaceChildren(el('div',{className:'center'},[
-        el('div',{className:'score',style:`color:${score>=7?'var(--good)':score>=4?'var(--warn)':'var(--bad)'}`},[`${score} / 10`]),
-        el('div',{className:'row',style:'margin-top:8px'},[you,save]),
-        el('div',{className:'row',style:'margin-top:8px'},[
-          el('button',{className:'btn2',onclick:()=>{history.pushState({},'',location.href.split('?')[0]);screenCreate();}},['Create my own quiz'])
-        ])
-      ]));
-    };
-    render();
-  }
-
-  function openBoard(quizId, nick){
-    title.textContent=(nick?`${nick}'s `:'')+'Scoreboard'; sub.textContent='Friends who answered this quiz.';
-    const list=el('div',{className:'list'});
-    app.replaceChildren(list);
-    const ref=db.ref(`scoreboards/${quizId}`);
-    ref.on('value',snap=>{
-      const rows=Object.values(snap.val()||{}).sort((a,b)=>b.at-a.at);
-      list.replaceChildren(rows.length? el('div',{},rows.map(r=>el('div',{className:'li'},[
-        el('div',{},[r.by||'Friend']), el('div',{className:'tag'},[`${r.score}/10`])
-      ]))) : el('div',{className:'pad muted'},['No entries yet. Share your link!']));
-    });
-    const base=location.href.split('?')[0] || (location.origin+location.pathname);
-    const share=`${base}?quiz=${quizId}`;
-    app.prepend(el('div',{className:'row',style:'margin-bottom:10px'},[
-      el('span',{className:'pill'},['Quiz ID: '+quizId]),
-      el('button',{className:'btn',onclick:()=>copy(share)},['Copy link']),
-      el('button',{className:'btn',onclick:()=>shareWA(share)},['WhatsApp'])
+  const finish=async()=>{
+    heading.textContent='Generating your link…'; sub.textContent='Please wait…';
+    const quizRef = firebase.database().ref('quizzes').push();
+    const quizId = quizRef.key;
+    await quizRef.set({nick, answers, createdAt: Date.now(), ver:2});
+    const base = location.href.split('?')[0];
+    const link = `${base}?quiz=${quizId}`;
+    const board = `${base}?quiz=${quizId}&view=board`;
+    shareTop.onclick=()=>copy(link); shareTop.style.display='inline-flex';
+    heading.textContent='Share your quiz';
+    sub.textContent='Send link to friends. Their scores will appear below.';
+    step.replaceChildren(el('div',{className:'stack fade'},[
+      el('div',{className:'glass pad'},[
+        el('div',{className:'muted'},['Quiz link:']),
+        el('div',{style:'word-break:break-all'},[link]),
+        el('div',{className:'row',style:'margin-top:10px'},[
+          el('button',{className:'btn',onclick:()=>copy(link)},['Copy link']),
+          el('button',{className:'btn outline',onclick:()=>openBoard(quizId,nick)},['Open my scoreboard'])
+        ]),
+        el('div',{className:'muted',style:'margin-top:8px'},['Scoreboard (only you): ', board])
+      ])
     ]));
-  }
+  };
+  render();
+}
 
-  // Router
-  (function init(){
-    if(quizIdParam && viewParam==='board'){ openBoard(quizIdParam); return; }
-    if(quizIdParam){ screenTake(quizIdParam); return; }
-    screenCreate();
-  })();
-  </script>
+async function screenTaker(quizId){
+  const snap = await firebase.database().ref('quizzes/'+quizId).get();
+  const quiz = snap.val();
+  if(!quiz){ heading.textContent='Invalid link'; sub.textContent='Quiz not found.'; step.textContent=''; return; }
+  const {nick, answers:correct} = quiz;
+  shareTop.style.display='inline-flex';
+  shareTop.onclick=()=>copy(location.href.split('&view=board')[0]);
+
+  let i=0; const answers=Array(20).fill(null);
+  const render=()=>{
+    heading.textContent=`Quiz for ${nick}`; sub.textContent='Guess the choices!';
+    const q=Q20[i];
+    const A=card(q.A, answers[i]==='A');
+    const B=card(q.B, answers[i]==='B');
+    A.onclick=()=>{answers[i]='A'; next()}; B.onclick=()=>{answers[i]='B'; next()};
+    step.replaceChildren(el('div',{className:'q fade'},[
+      el('h3',{},[q.t(nick)]),
+      el('div',{className:'opt'},[A,B]),
+      el('div',{className:'row'},[
+        el('span',{className:'pill'},[`Q ${i+1}/20`]),
+        el('span',{className:'pill'},[`For: ${nick}`])
+      ])
+    ]));
+  };
+  const card=(opt, active)=> el('div',{className:'choice'+(active?' sel':'')},[
+    el('img',{src:opt.img,alt:''}),
+    el('div',{className:'cap'},[el('div',{className:'l'},[opt.label]), el('div',{className:'r'},[el('span',{className:'badge'},['Pick'])])])
+  ]);
+  const next=()=>{ if(i<19){i++; render()} else finish(); };
+
+  const finish=async()=>{
+    let score=0; for(let j=0;j<20;j++) if(answers[j]===correct[j]) score++;
+    heading.textContent='Your score';
+    sub.textContent='How much you know '+nick+'?';
+    const your=el('input',{type:'text',placeholder:'Your nickname (e.g., Rocky)'});
+    const send=el('button',{className:'btn'},['Save & view scoreboard']);
+    send.onclick = async ()=>{
+      const by=(your.value||'Friend').trim();
+      await firebase.database().ref(`scoreboards/${quizId}`).push({by, score, at: Date.now()});
+      openBoard(quizId,nick);
+    };
+    step.replaceChildren(el('div',{className:'center stack fade'},[
+      el('div',{className:'score',style:`color:${score>=15?'var(--good)':score>=9?'var(--warn)':'var(--bad)'}`},[`${score} / 20`]),
+      el('div',{className:'muted'},['Enter your name to record score:']),
+      el('div',{className:'row'},[your, send]),
+      el('div',{className:'row'},[
+        el('button',{className:'btn outline',onclick:()=>screenCreator()},['Create my own quiz'])
+      ])
+    ]));
+  };
+  render();
+}
+
+async function openBoard(quizId, nick){
+  heading.textContent=(nick?`${nick}'s `:'')+'Scoreboard';
+  sub.textContent='Friends who answered this quiz.';
+  shareTop.style.display='inline-flex';
+  const base = location.href.split('?')[0];
+  const share = `${base}?quiz=${quizId}`;
+  shareTop.onclick=()=>copy(share);
+
+  const listWrap=el('div',{className:'list fade'});
+  step.replaceChildren(el('div',{},[
+    el('div',{className:'row'},[
+      el('span',{className:'pill'},[`Quiz ID: ${quizId}`]),
+      el('button',{className:'btn',onclick:()=>copy(share)},['Copy quiz link'])
+    ]),
+    listWrap
+  ]));
+  const ref = firebase.database().ref(`scoreboards/${quizId}`);
+  ref.on('value',(snap)=>{
+    const data = snap.val() || {};
+    const rows = Object.values(data);
+    listWrap.replaceChildren(
+      rows.length ? el('div',{}, rows.sort((a,b)=>b.at-a.at).map(r=> el('div',{className:'li'},[
+        el('div',{},[r.by||'Friend']), el('div',{className:'tag'},[`${r.score}/20`])
+      ]))) : el('div',{className:'pad muted'},['No entries yet. Share your link!'])
+    );
+  });
+}
+
+/* ---------- App start ---------- */
+(function init(){
+  if(needConfig()){ screenConfig(); return; }
+  const quiz=quizIdParam;
+  if(quiz && viewParam==='board'){ openBoard(quiz); return; }
+  if(quiz){ screenTaker(quiz); return; }
+  screenCreator();
+})();
+</script>
 </body>
 </html>
